@@ -9,7 +9,7 @@ import json
 import MySQLdb
 import MySQLdb.cursors
 from twisted.enterprise import adbapi
-
+from datetime import datetime
 from scrapy.exporters import JsonItemExporter
 from scrapy.pipelines.images import ImagesPipeline
 
@@ -52,12 +52,10 @@ class MysqlTwistedPipeline(object):
         query.addErrback(self.handle_error, item, spider)
 
     def do_insert(self, cursor, item):
-        insert_sql = """
-            insert into jobbole_article(title, url, create_date, fav_nums)
-            VALUES (%s, %s, %s, %s)
-        """
-        # 使用VALUES实现传值
-        cursor.execute(insert_sql, (item["title"], item["url"], item["create_date"], item["fav_nums"]))
+        # 执行具体的插入
+        # 根据不同的item 构建不同的sql语句并插入到mysql中
+        insert_sql, params = item.get_insert_sql()
+        cursor.execute(insert_sql, params)
 
     def handle_error(self, failure, item, spider):
         # 处理异步插入的异常
@@ -117,9 +115,10 @@ class JsonExporterPipeline(object):
 class ArticleImagePipeline(ImagesPipeline):
     # 重写该方法可从result中获取到图片的实际下载地址
     def item_completed(self, results, item, info):
-        for ok, value in results:
-            image_file_path = value["path"]
-        item["front_image_path"] = image_file_path
+        if "front_image_url" in item:
+            for ok, value in results:
+                image_file_path = value["path"]
+            item["front_image_path"] = image_file_path
 
         return item
 

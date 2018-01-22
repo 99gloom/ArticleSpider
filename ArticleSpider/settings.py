@@ -53,9 +53,11 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'ArticleSpider.middlewares.ArticlespiderDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   # 'ArticleSpider.middlewares.ArticlespiderDownloaderMiddleware': 543,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'ArticleSpider.middlewares.RandomUserAgentMiddlware': 400,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
@@ -72,7 +74,7 @@ ITEM_PIPELINES = {
     # 'scrapy.pipelines.images.ImagesPipeline': 1,
 
     # 我们自定义的图片下载pipeline:下载图片同时,保存路径
-    # 'ArticleSpider.pipelines.ArticleImagePipeline': 2
+    'ArticleSpider.pipelines.ArticleImagePipeline': 2,
 
     # 自定义的保存数据到json文件中的pipeline。
     # 'ArticleSpider.pipelines.JsonWithEncodingPipeline': 3,
@@ -91,6 +93,8 @@ ITEM_PIPELINES = {
 IMAGES_URLS_FIELD = "front_image_url"
 project_dir = os.path.abspath(os.path.dirname(__file__))
 IMAGES_STORE = os.path.join(project_dir, 'images')
+
+
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
@@ -117,3 +121,11 @@ MYSQL_HOST = "127.0.0.1"
 MYSQL_DBNAME = "articlespider"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "tp158917"
+
+# LOG_ENABLED = True
+SQL_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+SQL_DATE_FORMAT = "%Y-%m-%d"
+
+RANDOM_UA_TYPE = "random"
+
+# DOWNLOAD_DELAY = 1
